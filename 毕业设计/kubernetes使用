@@ -1,0 +1,38 @@
+# 通过资源配置运行容器
+
+## 概述
+
+与docker-compose一样，kubernetes里面有
+
+kubectl create -f xxx.yml
+
+和
+
+kubectl apply -f xxx.yml
+
+创建nginx.yml文件
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+
