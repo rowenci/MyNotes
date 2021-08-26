@@ -2,8 +2,6 @@
 
 Optimizing Algorithm is very import to Machine Learning. In a Machine learning problem, we usually define a loss function first. And then we can minimize this loss function using the optimizing algorithm.
 
-In this note, I will use Linear Regression as an example.
-
 ## 1. Linear Regression
 
 线性回归是通过多项式来拟合数据分布，并以此来进行预测。
