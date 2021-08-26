@@ -22,7 +22,9 @@ $J(\theta_0, \theta_1)=\frac{1}{2m}\sum_{i=1}^m[h_\theta(x^{(i)}-y^{(i)})]^2$
 
 上式是这个问题的loss function，平方差求和函数。它计算的是在参数（$\theta_0$，$\theta_1$）下的hypothesis function$h(\theta)$与实际的训练集的误差。
 
-### 1.3. Gradient Descent
+### 1.3. Optimizer
+
+使用Gradient Descent来最小化Loss Function
 
 purpose : 用来对参数进行更新
 
@@ -44,7 +46,59 @@ repeat until converge{
 
 ## 2. Classification Problems
 
+### 2.1. Logistic Regression
 
+#### 2.1.1. Hypothesis Function
+
+$h_\theta(x)=g(\theta^Tx)$
+
+$g(z)=\frac{1}{1+e^{-z}}$
+
+由上面两个式子可得logistic回归的假设函数为
+
+$h_\theta(x)=\frac{1}{1+e^{-\theta^Tx}}$
+
+$h_\theta(x)$是用来在输入$x$的情况下，得到$y=1$的概率情况
+
+因为logistic函数范围是0~1，因此符合概率的要求。
+
+#### 2.2.2. Loss Function
+
+$J(\theta)=\frac{1}{m}\sum_{i=1}^{m}cost(h_\theta(x^{(i)}),y^{(i)})$
+
+$cost(h_\theta(x),y)=-log(h_\theta(x))$ if $y=1$​
+
+$cost(h_\theta(x),y)=-log(1-h_\theta(x))$ if $y=0$
+
+由上式可将两种情况合并起来得到新的损失函数
+
+$J(\theta)=-\frac{1}{m}\sum_{i=1}^m[y^{(i)}log(h_\theta x^{(i)})+(1-y^{(i)})log(1-h_\theta(x^{(i)}))]$
+
+#### 2.2.3. Optimizer
+
+使用梯度下降算法
+
+repeat until converge{
+
+$\theta_j = \theta_j - \alpha \frac{\partial}{\partial\theta_j}J(\theta)$​​
+
+​     $=\theta_j-\alpha\frac{1}{m}\sum_{i=1}^{m}[(h_{\theta}-y^{i})x_j^{(i)}]$​​​​​
+
+(for j = 0 and j = 1)
+
+}**simultaneously update all parameters**
+
+注：在求导时，$g^\prime(z)=g(z)(1-g(z))$
+
+在这个梯度下降中，因为是对$\theta$求导，所以后面要加上$\frac{\partial}{\partial\theta}(\theta^Tx)$
+
+### 2.2. SoftMax Regression
+
+#### 2.2.1. Hypothesis Function
+
+#### 2.2.2. Loss Function
+
+#### 2.2.3. Optimizer
 
 ## 4. Tricks
 
