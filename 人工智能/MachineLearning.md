@@ -94,11 +94,45 @@ $\theta_j = \theta_j - \alpha \frac{\partial}{\partial\theta_j}J(\theta)$​​
 
 ### 2.2. SoftMax Regression
 
+softmax回归和logistic的区别就是，一个logistic函数只能进行一个二分类问题
+
+而softmax函数可以进行多分类
+
+softmax函数其实就是pytorch里面的交叉熵损失函数，因为计算和损失函数分开计算的话效果很不好所以pytorch就直接给他俩合成一个损失函数了。
+
 #### 2.2.1. Hypothesis Function
+
+假设该分类有4个feature，3个输出
+
+$o_1=x_1w_{11}+x_2w_{21}+x_3w_{31}+x_4w_{41}+b_1$
+
+$o_2=x_1w_{12}+x_2w_{22}+x_3w_{32}+x_4w_{42}+b_2$​
+
+$o_3=x_1w_{13}+x_2w_{23}+x_3w_{33}+x_4w_{43}+b_3$​
+
+这个其实就是一个全连接层，下面的计算在pytorch中与损失函数合到一起了。
+
+$\hat{y_1},\hat{y_2},\hat{y_3}=$softmax$(o_1,o_2,o_3)$
+
+其中
+
+$\hat{y_1}=\frac{e^{o_1}}{\sum_{i=1}^{3}e^{o_i}}$
+
+$\hat{y_2}=\frac{e^{o_2}}{\sum_{i=1}^{3}e^{o_i}}$​
+
+$\hat{y_3}=\frac{e^{o_3}}{\sum_{i=1}^{3}e^{o_i}}$​
 
 #### 2.2.2. Loss Function
 
+cross entropy
+
+$H(y^{(i)},\hat{y}^{(i)})=-\sum_{j=1}^{q}y_j^{(i)}log\hat{y}_j^{(i)}$
+
+$l(\Theta)=\frac{1}{n}\sum_{i=1}^{n}H(y^{(i)},\hat{y}^{(i)})$​​
+
 #### 2.2.3. Optimizer
+
+gradient descent
 
 ## 4. Tricks
 
