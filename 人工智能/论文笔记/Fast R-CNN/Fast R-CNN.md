@@ -2,6 +2,8 @@
 
 使用VGG16作为网络的backbone
 
+![20180713152120324](F:\MyNotes\人工智能\论文笔记\Fast R-CNN\20180713152120324.png)
+
 ## 原理
 
 1. 使用selective search，生成约2k的候选框
