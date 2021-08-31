@@ -55,7 +55,15 @@ anchor是RPN独创的一个生成候选框的机制。
 
 ### 3.3. ROI Pooling
 
+![2](F:\MyNotes\人工智能\论文笔记\Faster R-CNN\2.gif)
 
+1. 根据输入image，将ROI映射到feature map对应位置；
+2. 将映射后的区域划分为相同大小的sections（sections数量与输出的维度相同）；
+3. 对每个sections进行max pooling操作；
+
+首先将region proposal映射到经过CNN处理的feature map上
+
+然后对映射后的区域进行划分，如果需要输出一个2 * 2的特征图，就分别对region proposal的宽和高进行除2操作。比如上图的region proposal是7 * 5大小，那么第一个section就是7 / 2下取整就是3, 5 / 2 = 2。剩下的就是其余的section。等section划分完成后就对每个section进行max Pooling操作。
 
 ### 3.4. Classification, Regression
 
