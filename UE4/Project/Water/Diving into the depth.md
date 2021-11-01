@@ -1,5 +1,9 @@
 # Diving into the Depths
 
+因为项目需要，使用了UE4.26自带的水插件，通过观看官方视频进行学习并写下学习笔记，特此分享。
+
+视频链接：https://www.bilibili.com/video/BV11Q4y197Rn
+
 ## Intro and Basics
 
 如果创建的海洋与地形的衔接过于生硬，可以将falloff setting中的falloff mode从angle改成width。
