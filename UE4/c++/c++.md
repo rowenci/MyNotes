@@ -25,11 +25,11 @@ FVector InitLocation
 
 这是用来标识ue4变量的东西，可以选择这个东西在ue4界面当中是否可以编辑以及在哪编辑。
 
+有以下几种方式：
+
 VisibleAnywhere 在哪都能看
 
 EditAnywhere	在哪都能编辑（蓝图当中以及细节面板当中）
-
-
 
 
 

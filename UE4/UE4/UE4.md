@@ -78,3 +78,9 @@ Controller - 依附并控制一个 Pawn。通过将 Pawn 和 Controller 的分�
 
 
 Player Controller - 一个更为特殊的 Controller，用于从玩家的手柄中获得输入信息，或者鼠标键盘中获得殊瑞星纳西，并将这些信息驱动它所控制的 Pawn 或者 Character 的行为。
+
+
+
+## 无法保存资产
+
+这是因为同时开了两个相同的项目

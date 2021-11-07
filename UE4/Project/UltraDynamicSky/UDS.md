@@ -517,3 +517,19 @@ Disable Completely 完全禁用
 **Weather Connection 天气连接**
 
 **Weather BP 天气蓝图**
+
+
+
+
+
+
+
+如果想弄雾天，就在Height Fog当中来进行修改
+
+Fog Density Clear是晴天时候的雾气浓度
+
+Cloudy是多云天气时候的雾气浓度
+
+Fog Start Distance when clear是晴天雾气的可见度
+
+cloudy多云天雾气的可见度
