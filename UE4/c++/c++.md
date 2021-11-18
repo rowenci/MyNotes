@@ -53,6 +53,8 @@ VisibleDefaultsOnly 只能蓝图当中看
 
 
 
+https://docs.unrealengine.com/4.26/zh-CN/ProgrammingAndScripting/GameplayArchitecture/Properties/
+
 ```c++
 	// 注意category中的名称最好用空格来写，不然显示不出来
 	UPROPERTY(VisibleAnywhere, Category = "My Actor Components")
