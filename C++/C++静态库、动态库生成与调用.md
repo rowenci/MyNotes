@@ -37,11 +37,23 @@ extern "C" MYDLL int sub(int a, int b);
 
 ```c++
 #include "iostream"
+#include "People.h"
+#include "StaticLibrary1.h"
 #include "Windows.h"
 typedef int(*PSUB) (int a, int b);
+typedef void(*PTEST) (People people);
+
+int testP(int a, int b, int c)
+{
+    return a + b + c;
+}
+
 
 int main(int argc, char* argv[])
 {
+    std::cout << "hello world" << std::endl;
+    std::cout << add(1, 2) << std::endl;
+    
     HMODULE hDLL = LoadLibrary(L"../x64/Release/DynamicLibrary1.dll");
     if (hDLL == NULL)
     {
@@ -50,9 +62,21 @@ int main(int argc, char* argv[])
     }
     PSUB pSub = (PSUB)GetProcAddress(hDLL, "sub");
     std::cout << pSub(2 , 1) << std::endl;
+
+    PTEST pTest = (PTEST)GetProcAddress(hDLL, "testClass");
+    People peo;
+    peo.name = "rowenci";
+    peo.age = 24;
+    pTest(peo);
+    
+    int (*p) (int, int, int) = &testP;
+    std::cout << p(1, 2, 3) << std::endl;
     return 0;
 }
-
 ```
 
 这种方法无需进行项目配置
+
+目前探索出来的是，基础类型肯定可以传
+
+尝试了传一个对象，成功
