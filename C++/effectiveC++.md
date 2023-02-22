@@ -132,3 +132,172 @@ iterator find(const T& value)
 这种情况，如果是非常量调用find的话，因为return的返回值是把常量给转除了，所以是可以的。
 
 如果是常量调用find，那么直接调用的就是上面那个版本了。
+
+## 条款04
+
+确定对象被使用之前已先被初始化（Make sure that objects are initialized before they're used.）
+
+对于一个整型变量，如果是一个普通语句，那么如果不给这个x进行赋初始值，那么编译器就会给这个x自动赋个0；
+
+但是如果这个x是在对象当中以成员变量存在的话，就没有办法保证了。
+
+因此，最好的处理方法就是，永远在使用对象之前，先将它初始化。
+
+对于内置的成员类型，比如int、double、指针等，需要手工去初始化。
+
+对于内置类型以外的其他东西，初始化就需要在构造函数当中进行，确保每一个构造函数都将对象的每一个成员初始化。
+
+在使用构造函数初始化时需要注意
+
+```c++
+Test::Test(int x){
+    _x = x;
+}
+```
+
+这种写法不是初始化，而是赋值。这个构造函数首先为成员变量设置初始值，然后才为他们赋值成x。
+
+下面是成员初始值列（member initialization list）的做法
+
+```c++
+Test::Test(int x)
+    :_x(x)
+{}
+```
+
+这个才是初始化。
+
+不同编译单元内定义之non-local static对象的初始化次序。
+
+函数内的static对象成为local static；其他的成为non-local static对象
+
+编译单元就是产出单一目标文件的源码。就是一个同名的.h和.cpp
+
+那么上述情况就至少会包括两个不同命的源码了。每一个内含至少一个non-local static对象。
+
+那么问题就是：如果某编译单元内的某个non-local static对象的初始化动作使用了另一个编译单元的某个non-local static对象，那么它使用到的这个对象可能尚未被初始化。
+
+```c++
+class FileSystem{
+    public:
+    std::size_t numDisks() const;
+};
+extern FileSystem tfs;
+```
+
+```c++
+class Directory{
+    public:
+    Directory(params);
+    ...
+};
+Directory::Directory(params){
+    ...
+    std::size_t disks = tfs.numDisks();
+}
+```
+
+上述这种情况，Directory中成员函数可能会引用到未被初始化的tfs。
+
+可以采用单例模式的手法来调用tfs。也就是通过一个函数来调用这个变量。这个函数返回一个引用来指向这个变量。
+
+```c++
+class FileSystem{...};
+FileSystem& tfs(){
+    static FileSystem fs;
+    return fs;
+}
+class Directory{...};
+Directory::Directory(params){
+    ...
+    std::size_t disks = tfs().numDisks();
+    ...
+}
+Directory& tempDir(){
+    static Directory td;
+    return td;
+}
+```
+
+这样就采用函数来对tfs进行调用，他们使用函数返回的“指向static对象”的reference，而不再使用static对象本身。
+
+```c++
+静态局部变量的说明：
+(1) 静态局部变量在静态存储区内分配存储单元。在程序整个运行期间都不释放。而自动变量（即动态局部变量）属于动态存储类别，存储在动态存储区空间(而不是静态存储区空间)，函数调用结束后即释放。
+
+(2) 为静态局部变量赋初值是在编译时进行值的，即只赋初值一次，在程序运行时它已有初值。以后每次调用函数时不再重新赋初值而只是保留上次函数调用结束时的 值。而为自动变量赋初值，不是在编译时进行的，而是在函数调用时进行，每调用一次函数重新给一次初值，相当于执行一次赋值语句。
+
+(3) 如果在定义局部变量时不赋初值的话，对静态局部变量来说，编译时自动赋初值0(对数值型变量)或空字符(对字符型变量)。而对自动变量来说，如果不赋初 值，则它的值是一个不确定的值。这是由于每次函数调用结束后存储单元已释放，下次调用时又重新另分配存储单元，而所分配的单元中的值是不确定的。
+
+(4) 虽然静态局部变量在函数调用结束后仍然存在，但其他函数是不能引用它的，也就是说，在其他函数中它是“不可见”的。
+```
+
+总结：
+
+1. 为内置的变量进行手工初始化，c++不保证初始化它们
+2. 构造函数最好使用成员初值列，不要再构造函数内使用赋值操作，初值列列出的成员变量排序次序应该和它们在class中的声明次序相同
+3. 为免除“夸编译单元之初始化次序”问题，请以local static对象替换non-local static对象。
+
+## 条款05
+
+了解C++默默编写并调用哪些函数（Know what functions C++ silently writes and calls）
+
+如果创建了一个完全空的类，里面没有任何东西，当C++处理过它之后，编译器就会为它声明：
+
+1. copy构造函数
+2. copy assignment操作符
+3. 析构函数
+4. default构造函数
+
+```c++
+class Empty{};
+
+class Empty{
+public:
+    Empty(){...}	// default constructor
+    Empty(const Empty& rhs) {...}	// copy constructor
+    ~Empty(){...}	// destructor
+    Empty& operator=(const Empty& rhs){...}	// copy assignment operator
+};
+
+// 只有当上述的这些函数需要被调用，他们才会被编译器创建出来
+Empty e1; // default constructor
+			// destructor
+Empty e2(e1);	// copy constructor
+e2 = e1	// copy assignment operator
+```
+
+default constructor 和 destructor会调用基类和non-static成员变量的构造函数和析构函数
+
+对于内含reference成员和const成员的类，编译器就会拒绝生成相应函数。
+
+如果基类将copy assignment operator声明为private，那么派生类将不会生成对应操作符。
+
+## 条款06
+
+若不想使用编译器自动生成的函数，就该明确拒绝（Explicitly disallow the use of comiler-generated functions you do not want.）
+
+如果不想对象被复制，那么可以通过将copy constructor和copy assignment operator声明为private。编译器就不会创建相应的函数了。但是这种方法不绝对安全，因为成员函数和友元函数还是可以调用私有成员。可以声明上述构造函数和操作符，但不去定义他们。
+
+上述做法就是生成了一个链接期的错误，因为调用上述函数（只有声明，没有定义）的话会报链接错误。
+
+如果想在编译器就做上述的限制，只要将构造函数和操作符在一个专门为了阻止copying动作而设计的基类当中进行私有声明。
+
+```c++
+class Uncopyable{
+protected:	// 允许派生对象构造和析构
+    Uncopyable(){}
+    ~Uncopyable(){}
+private:	// 但是拒绝copying
+    Uncopyable(const Uncopyable&);
+    Uncopyable& operator=(const Uncopyable&);
+}
+```
+
+只要继承这个Uncopyable类，这个对象就会被阻止拷贝。包括成员函数和友元函数也是如此。
+
+总结：
+
+不需要编译器自动提供的功能的话，可以将相应的成员函数声明成private且不进行实现。
+
+使用Uncopyable这样的基类也可以。
