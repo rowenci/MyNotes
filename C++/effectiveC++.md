@@ -355,3 +355,76 @@ AWOV::~AWOV(){}
 
 1. 析构函数绝对不要抛出异常。如果一个被析构函数调用的函数可能抛出异常，应当由析构函数来catch这个异常，然后吞下他们，或结束程序。
 2. 异常应该在普通函数中被捕捉。
+
+## 条款09
+
+绝不在构造和析构过程中调用virtual函数（Never call virtual functions during construction or destruction.）
+
+```c++
+class Transaction{
+public:
+    Transaction();
+    virtual void logTransaction() const = 0;
+};
+Transaction::Transaction(){
+    ...
+    logTransaction();
+}
+class BuyTransaction: public Transaction{
+public:
+    virtual void logTransaction() const;
+    ...
+}
+```
+
+如果实例化一个BuyTransaction对象的话，会导致Transaction对象当中的构造函数被调用。
+
+而恰好这个构造函数调用了一个虚函数，而这个虚函数并不是derived class里面的函数，而是base class里面的。
+
+## 条款10
+
+令operator= 返回一个reference to *this（Have assignment operators return a reference to *this）
+
+赋值采用的是右结合律
+
+```c++
+int x, y, z;
+x = y = z = 15;
+x = (y = (z = 15));
+```
+
+那么，为了实现连锁赋值，对于class类型的变量，赋值操作符必须返回一个reference指向操作符的左侧实参。
+
+这个协议同样适用于所有与赋值相关的运算。如+=
+
+## 条款11
+
+在operator= 中处理“自我赋值”（Handle assignment to self in operator=）
+
+```c++
+class A{...};
+A a;
+...
+a = a;	// 自我赋值
+```
+
+```c++
+class A{
+    Bitmap* ob;
+    operator=(const A& rhs){
+        delete pb;
+        pb = new Bitmap(*rhs.pb);
+        return *this;
+    }
+};
+```
+
+上面这种情况，如果存在自我赋值的时候，就会出问题，pb会先被删除，然后出现指针访问错误。
+
+解决方法就是进行一个证同测试
+
+```c++
+if(this == &rhs) return *this;
+```
+
+或者，创建
